@@ -1,0 +1,101 @@
+package com.example.fileStorage.service;
+
+import com.example.fileStorage.dto.FilePage;
+import com.example.fileStorage.model.File;
+import com.example.fileStorage.repository.FileRepository;
+import com.example.fileStorage.util.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+
+@Service
+public class FileServiceImpl implements FileService {
+
+    private FileRepository fileRepository;
+    private FileUtils fileUtils;
+
+    @Autowired
+    public FileServiceImpl(FileRepository fileRepository, FileUtils fileUtils) {
+        this.fileRepository = fileRepository;
+        this.fileUtils = fileUtils;
+    }
+
+
+    @Override
+    public File getById(String id) {
+        return fileRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public File save(File file) {
+        if(!fileUtils.isFilenameValid(file.getName()) || file.getSize() < 0)
+            return null;
+
+        if(file.getTags() == null) file.setTags(new HashSet<>());
+
+        String contentType = fileUtils.getFileContentType(file.getName());
+        if(contentType != null) file.getTags().add(contentType);
+
+        return fileRepository.save(file);
+    }
+
+    @Override
+    public File delete(String id) {
+        File file = fileRepository.findById(id).orElse(null);
+        if(file == null)
+            return null;
+
+        fileRepository.deleteById(id);
+        return file;
+    }
+
+    @Override
+    public boolean assignTags(String id, Set<String> tags) {
+        File file = fileRepository.findById(id).orElse(null);
+        if(file == null)
+            return false;
+
+        for(String tag:tags)
+            file.getTags().add(tag);
+
+        fileRepository.save(file);
+        return true;
+    }
+
+    @Override
+    public boolean removeTags(String id, Set<String> tags) {
+        File file = fileRepository.findById(id).orElse(null);
+        if(file == null)
+            return false;
+
+        for(String tag:tags)
+            if(!file.getTags().contains(tag)) return false;
+
+        for(String tag:tags)
+            file.getTags().remove(tag);
+
+        fileRepository.save(file);
+        return true;
+
+    }
+
+    @Override
+    public FilePage getFiles(Set<String> tags, int page, int size, String q) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<File> pageFiles;
+        if(tags == null || tags.isEmpty())
+            pageFiles = fileRepository.findByNameContainingIgnoreCase(q, pageable);
+        else
+            pageFiles = fileRepository.findByTagsInAndNameContainingIgnoreCase(tags, q, PageRequest.of(page, size));
+
+        FilePage filePage = new FilePage(pageFiles.getTotalElements(), pageFiles.getContent());
+
+        return filePage;
+    }
+}
