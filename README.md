@@ -1,26 +1,26 @@
-## Table of contents
+# Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Usage](#usage)
 
-## General info
+# General info
 Application that allows store files information in the cloud, categorize them with tags and search through them.
-## Technologies
+# Technologies
 Project created with:
 * Java version: 11
 * SpringBoot version: 2.4.1
 * Maven
 * Elasticsearch
 	
-## Usage
-### How to build
+# Usage
+## How to build
 Standalone jar
 `./mvnw.cmd clean install`
 
 Ready jar file you can find in 
 `\target\`
 
-### Start
+## Start
 `./mvnw.cmd spring-boot:run`
 
 Also, you can run jar file after building.
@@ -32,9 +32,9 @@ elasticsearch.host
 elasticsearch.port
 ```
 
-### Endpoints
+## Endpoints
 The program designed as a rest api.
-####Upload
+###Upload
 `POST /file`
 ```json
 {
@@ -48,25 +48,25 @@ as a result of success you will receive status 200 and body:
    "ID": "unique file ID"
 }
 ```
-####Delete file
+###Delete file
 `DELETE  /file/{ID}`
 
 If success it returns status 200 and body:
 ```json
 {"success": true}
 ```
-####Assign tags to file
+###Assign tags to file
 Also, tou can add tags to file:
 `POST /file/{ID}/tags`
 ```json
 ["tag1", "tag2", "tag3"]
 ```
-####Remove tags from file
+###Remove tags from file
 `DELETE /file/{ID}/tags`
 ```json
 ["tag1", "tag3"]
 ```
-####List files with pagination optionally filtered by tags and filename
+###List files with pagination optionally filtered by tags and filename
 `GET /file?tags=tag1,tag2,tag3&page=2&size=3`
 Here:
 * tags - [optional] list of tags to filter by. Only files containing ALL of supplied tags should return. If tags parameter is omitted - don't apply tags filtering i.e. return all files.
