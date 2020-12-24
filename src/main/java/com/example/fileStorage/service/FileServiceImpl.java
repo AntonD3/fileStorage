@@ -92,7 +92,7 @@ public class FileServiceImpl implements FileService {
         if(tags == null || tags.isEmpty())
             pageFiles = fileRepository.findByNameContainingIgnoreCase(q, pageable);
         else
-            pageFiles = fileRepository.findByTagsInAndNameContainingIgnoreCase(tags, q, PageRequest.of(page, size));
+            pageFiles = fileRepository.findByTagsInAndNameContainingIgnoreCase(tags, q, pageable);
 
         FilePage filePage = new FilePage(pageFiles.getTotalElements(), pageFiles.getContent());
 
