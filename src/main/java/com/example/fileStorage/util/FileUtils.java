@@ -9,6 +9,8 @@ import java.io.IOException;
 @Component
 public class FileUtils {
     public boolean isFilenameValid(String file) {
+        if(file == null) return false;
+        if(file.equals("")) return false;
         java.io.File f = new java.io.File(file);
         try {
             f.getCanonicalPath();
@@ -16,6 +18,12 @@ public class FileUtils {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public boolean isSizeValid(Integer size)
+    {
+        if(size == null) return false;
+        return size >= 0;
     }
 
     public String getFileContentType(String file)

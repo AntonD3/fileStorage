@@ -25,11 +25,11 @@ public class FileController {
     @PostMapping
     public ResponseEntity<Status> uploadFile(@RequestBody File file)
     {
-        file = fileService.save(file);
-        if(file == null)
-            return new ResponseEntity<>(new Status(false, "error description"), HttpStatus.BAD_REQUEST);
+        Status status = fileService.save(file);
+        if(status.getId() != null)
+            return new ResponseEntity<>(status, HttpStatus.OK);
         else
-            return new ResponseEntity<>(new Status(file.getId()), HttpStatus.OK);
+            return new ResponseEntity<>(status, HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("{id}")

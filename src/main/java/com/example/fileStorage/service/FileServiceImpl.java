@@ -1,6 +1,7 @@
 package com.example.fileStorage.service;
 
 import com.example.fileStorage.dto.FilePage;
+import com.example.fileStorage.dto.Status;
 import com.example.fileStorage.model.File;
 import com.example.fileStorage.repository.FileRepository;
 import com.example.fileStorage.util.FileUtils;
@@ -32,16 +33,24 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File save(File file) {
-        if(!fileUtils.isFilenameValid(file.getName()) || file.getSize() < 0)
-            return null;
+    public Status save(File file) {
+        if(file == null)
+            return new Status(false, "invalid body");
 
-        if(file.getTags() == null) file.setTags(new HashSet<>());
+        if(!fileUtils.isFilenameValid(file.getName()))
+            return new Status(false,"invalid filename");
 
+        if(!fileUtils.isSizeValid(file.getSize()))
+            return new Status(false,"invalid size");
+
+        file.setId(null);
+
+        file.setTags(new HashSet<>());
         String contentType = fileUtils.getFileContentType(file.getName());
         if(contentType != null) file.getTags().add(contentType);
 
-        return fileRepository.save(file);
+        file = fileRepository.save(file);
+        return new Status(file.getId());
     }
 
     @Override
