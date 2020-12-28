@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import java.util.Set;
 
 public interface FileRepository extends ElasticsearchRepository<File, String> {
-    Page<File> findByTagsInAndNameContainingIgnoreCase(Set<String> tags, String q, Pageable pageable);
+    Page<File> findByTagsAndNameContainingIgnoreCase(Set<String> tags, String q, Pageable pageable);
 
     Page<File> findByNameContainingIgnoreCase(String q, Pageable pageable);
 
