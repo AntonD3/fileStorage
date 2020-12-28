@@ -63,11 +63,11 @@ public class FileController {
 
     @GetMapping
     public FilePage getFiles(@RequestParam(required = false) Set<String> tags,
-                             @RequestParam(defaultValue = "0") String page,
-                             @RequestParam(defaultValue = "10") String size,
+                             @RequestParam(defaultValue = "0") Integer page,
+                             @RequestParam(defaultValue = "10") Integer size,
                              @RequestParam(defaultValue = "") String q
     )
     {
-        return fileService.getFiles(tags, Integer.parseInt(page), Integer.parseInt(size), q);
+        return fileService.getFiles(tags, page, size, q);
     }
 }
